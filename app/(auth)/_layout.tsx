@@ -1,7 +1,7 @@
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { Pressable } from 'react-native';
-import { useAuth } from '@clerk/clerk-expo';
+import { Tabs } from "expo-router";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Pressable } from "react-native";
+import { useAuth } from "@clerk/clerk-expo";
 
 export const LogoutButton = () => {
   const { signOut } = useAuth();
@@ -12,7 +12,7 @@ export const LogoutButton = () => {
 
   return (
     <Pressable onPress={doLogout} style={{ marginRight: 10 }}>
-      <Ionicons name="log-out-outline" size={24} color={'#fff'} />
+      <Ionicons name="log-out-outline" size={24} color={"#fff"} />
     </Pressable>
   );
 };
@@ -24,25 +24,43 @@ const TabsPage = () => {
     <Tabs
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#6c47ff',
+          backgroundColor: "#90EE90",
         },
-        headerTintColor: '#fff',
-      }}>
+        headerTintColor: "#fff",
+      }}
+    >
       <Tabs.Screen
         name="home"
         options={{
-          headerTitle: 'Home',
-          tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" size={size} color={color} />,
-          tabBarLabel: 'Home',
+          headerTitle: "Home",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={size} color={color} />
+          ),
+          tabBarLabel: "Home",
         }}
         redirect={!isSignedIn}
       />
+
+      <Tabs.Screen
+        name="report"
+        options={{
+          headerTitle: "Report",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="description" size={size} color={color} />
+          ),
+          tabBarLabel: "Report",
+        }}
+        redirect={!isSignedIn}
+      />
+
       <Tabs.Screen
         name="profile"
         options={{
-          headerTitle: 'My Profile',
-          tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
-          tabBarLabel: 'My Profile',
+          headerTitle: "My Profile",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
+          ),
+          tabBarLabel: "My Profile",
           headerRight: () => <LogoutButton />,
         }}
         redirect={!isSignedIn}

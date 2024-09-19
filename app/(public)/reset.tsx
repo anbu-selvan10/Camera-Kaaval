@@ -47,9 +47,9 @@ const PwReset = () => {
 
       {!successfulCreation && (
         <>
-          <TextInput autoCapitalize="none" placeholder="simon@galaxies.dev" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
+          <TextInput autoCapitalize="none" placeholder="Enter the mail" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
 
-          <Button onPress={onRequestReset} title="Send Reset Email" color={'#6c47ff'}></Button>
+          <Button onPress={onRequestReset} title="Send Reset Email" color={'#90EE90'}></Button>
         </>
       )}
 
@@ -59,7 +59,7 @@ const PwReset = () => {
             <TextInput value={code} placeholder="Code..." style={styles.inputField} onChangeText={setCode} />
             <TextInput placeholder="New password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
           </View>
-          <Button onPress={onReset} title="Set new Password" color={'#6c47ff'}></Button>
+          <Button onPress={onReset} title="Set new Password" color={'#90EE90'}></Button>
         </>
       )}
     </View>
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     height: 50,
     borderWidth: 1,
-    borderColor: '#6c47ff',
+    borderColor: '#90EE90',
     borderRadius: 4,
     padding: 10,
     backgroundColor: '#fff',

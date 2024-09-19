@@ -1,13 +1,136 @@
-import { View, Text } from 'react-native';
-import React from 'react';
 import { useUser } from '@clerk/clerk-expo';
+import React from "react";
+import { StyleSheet, Image, Dimensions, Text, View, TouchableOpacity } from "react-native";
+import Ionicons from '@expo/vector-icons/Ionicons';
+
+const w = Dimensions.get("window").width;
+const height = Dimensions.get("window").height;
+
+const styles = StyleSheet.create({
+  userfpcontainer: {
+    padding: 20,
+    margin: 10,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: 'white',
+    width: '90%',
+    height: 300,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden', 
+  },
+  imagefituserfp: {
+    width: "120%",
+    height: "120%",
+    borderRadius: 15,
+    position: 'absolute', 
+    top: 0,
+    left: 0,
+  },
+  usertitlefp: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#000", 
+    textAlign: "center",
+    position: "absolute", 
+    bottom: 4, 
+    width: "100%",
+  },
+  userfpc1: {
+    borderRadius: 10,
+    borderColor: '#000',
+    borderWidth: 1,
+    padding: 15,
+    margin: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    
+  },
+  textfpc1: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  reporticon: {
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderRadius: 20,
+  },
+  userpopularfp: {
+    fontSize: 20,
+    fontWeight: "bold",
+    margin: 13,
+    textAlign: "center",
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#000',
+    padding: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    height: height * 0.08, // Responsive footer height
+  },
+  footerButton: {
+    alignItems: 'center',
+  },
+  footerButtonText: {
+    color: 'white',
+    fontSize: w* 0.03, // Responsive font size
+    marginTop: 4,
+  },
+});
 
 const Home = () => {
   const { user } = useUser();
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Welcome, {user?.emailAddresses[0].emailAddress} 🎉</Text>
+    <View style={{ flex: 1 }}>
+      <View style={[styles.userfpcontainer, { width: w * 0.95 }]}>
+        <Image 
+          source={require("/Camera Kaaval/camera-kaaval/assets/images/sliderimg2.jpeg")} 
+          style={styles.imagefituserfp} 
+          resizeMode="cover" 
+        />
+        {/* <Text style={styles.usertitlefp} numberOfLines={1}>
+          Welcome to Camera Kaaval
+        </Text> */}
+      </View>
+
+      <Text style={styles.userpopularfp}>
+        Popular Actions 
+      </Text>
+      <View style={[styles.userfpc1, { width: w * 0.95 }]}>
+        <Text style={styles.textfpc1}>
+          Report a violation 
+        </Text>
+        <TouchableOpacity style={styles.reporticon}>
+          <Ionicons name="arrow-forward-outline" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+
+      <View style={[styles.userfpc1, { width: w * 0.95 }]}>
+        <Text style={styles.textfpc1}>
+          Pay a citizen 
+        </Text>
+        <TouchableOpacity style={styles.reporticon}>
+          <Ionicons name="arrow-forward-outline" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+
+      <View style={[styles.userfpc1, { width: w * 0.95 }]}>
+        <Text style={styles.textfpc1}>
+          Check status of my report
+        </Text>
+        <TouchableOpacity style={styles.reporticon}>
+          <Ionicons name="arrow-forward-outline" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

@@ -38,7 +38,7 @@ const Login = () => {
       <TextInput autoCapitalize="none" placeholder="Email" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
       <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
 
-      <Button onPress={onSignInPress} title="Login" color={'#6c47ff'}></Button>
+      <Button onPress={onSignInPress} title="Login" color={'#90EE90'}></Button>
 
       <Link href="/reset" asChild>
         <Pressable style={styles.button}>
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     height: 50,
     borderWidth: 1,
-    borderColor: '#6c47ff',
+    borderColor: '#90EE90',
     borderRadius: 4,
     padding: 10,
     backgroundColor: '#fff',

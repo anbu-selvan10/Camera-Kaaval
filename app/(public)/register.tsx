@@ -69,7 +69,7 @@ const Register = () => {
           <TextInput autoCapitalize="none" placeholder="Email" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
           <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
 
-          <Button onPress={onSignUpPress} title="Sign up" color={'#6c47ff'}></Button>
+          <Button onPress={onSignUpPress} title="Sign up" color={'#90EE90'}></Button>
         </>
       )}
 
@@ -78,7 +78,7 @@ const Register = () => {
           <View>
             <TextInput value={code} placeholder="Enter the verification code" style={styles.inputField} onChangeText={setCode} />
           </View>
-          <Button onPress={onPressVerify} title="Verify Email" color={'#6c47ff'}></Button>
+          <Button onPress={onPressVerify} title="Verify Email" color={'#90EE90'}></Button>
         </>
       )}
     </View>
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     height: 50,
     borderWidth: 1,
-    borderColor: '#6c47ff',
+    borderColor: '#90EE90',
     borderRadius: 4,
     padding: 10,
     backgroundColor: '#fff',
