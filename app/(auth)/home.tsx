@@ -1,6 +1,6 @@
 import { useUser } from '@clerk/clerk-expo';
 import React from "react";
-import { StyleSheet, Image, Dimensions, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Image, Dimensions, Text, View, TouchableOpacity, ScrollView } from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 const w = Dimensions.get("window").width;
@@ -28,14 +28,11 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
   },
-  usertitlefp: {
-    fontSize: 18,
+  userpopularfp: {
+    fontSize: 20,
     fontWeight: "bold",
-    color: "#000", 
+    margin: 13,
     textAlign: "center",
-    position: "absolute", 
-    bottom: 4, 
-    width: "100%",
   },
   userfpc1: {
     borderRadius: 10,
@@ -46,7 +43,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    
   },
   textfpc1: {
     fontSize: 16,
@@ -56,12 +52,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#007bff',
     padding: 10,
     borderRadius: 20,
-  },
-  userpopularfp: {
-    fontSize: 20,
-    fontWeight: "bold",
-    margin: 13,
-    textAlign: "center",
   },
   footer: {
     flexDirection: 'row',
@@ -74,15 +64,11 @@ const styles = StyleSheet.create({
     width: '100%',
     position: 'absolute',
     bottom: 0,
-    height: height * 0.08, // Responsive footer height
+    height: height * 0.08,
   },
-  footerButton: {
-    alignItems: 'center',
-  },
-  footerButtonText: {
-    color: 'white',
-    fontSize: w* 0.03, // Responsive font size
-    marginTop: 4,
+  scrollViewContainer: {
+    flexGrow: 1,
+    paddingBottom: height * 0.08, 
   },
 });
 
@@ -91,48 +77,54 @@ const Home = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={[styles.userfpcontainer, { width: w * 0.95 }]}>
-        <Image 
-          source={require("/Camera Kaaval/camera-kaaval/assets/images/sliderimg2.jpeg")} 
-          style={styles.imagefituserfp} 
-          resizeMode="cover" 
-        />
-        {/* <Text style={styles.usertitlefp} numberOfLines={1}>
-          Welcome to Camera Kaaval
-        </Text> */}
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        <View style={[styles.userfpcontainer, { width: w * 0.95 }]}>
+          <Image 
+            source={require("/camera_kaaval_clerk/Camera-Kaaval/assets/images/sliderimg2.jpeg")} 
+            style={styles.imagefituserfp} 
+            resizeMode="cover" 
+          />
+          {/* <Text style={styles.usertitlefp} numberOfLines={1}>
+            Welcome to Camera Kaaval
+          </Text> */}
+        </View>
 
-      <Text style={styles.userpopularfp}>
-        Popular Actions 
-      </Text>
-      <View style={[styles.userfpc1, { width: w * 0.95 }]}>
-        <Text style={styles.textfpc1}>
-          Report a violation 
+        <Text style={styles.userpopularfp}>
+          Popular Actions 
         </Text>
-        <TouchableOpacity style={styles.reporticon}>
-          <Ionicons name="arrow-forward-outline" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
+        
+        <View style={[styles.userfpc1, { width: w * 0.95 }]}>
+          <Text style={styles.textfpc1}>
+            Report a violation 
+          </Text>
+          <TouchableOpacity style={styles.reporticon}>
+            <Ionicons name="arrow-forward-outline" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
 
-      <View style={[styles.userfpc1, { width: w * 0.95 }]}>
-        <Text style={styles.textfpc1}>
-          Pay a citizen 
-        </Text>
-        <TouchableOpacity style={styles.reporticon}>
-          <Ionicons name="arrow-forward-outline" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
+        <View style={[styles.userfpc1, { width: w * 0.95 }]}>
+          <Text style={styles.textfpc1}>
+            Pay a citizen 
+          </Text>
+          <TouchableOpacity style={styles.reporticon}>
+            <Ionicons name="arrow-forward-outline" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
 
-      <View style={[styles.userfpc1, { width: w * 0.95 }]}>
-        <Text style={styles.textfpc1}>
-          Check status of my report
-        </Text>
-        <TouchableOpacity style={styles.reporticon}>
-          <Ionicons name="arrow-forward-outline" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
+        <View style={[styles.userfpc1, { width: w * 0.95 }]}>
+          <Text style={styles.textfpc1}>
+            Check status of my report
+          </Text>
+          <TouchableOpacity style={styles.reporticon}>
+            <Ionicons name="arrow-forward-outline" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+
+
     </View>
   );
 };
 
 export default Home;
+

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, Alert, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, Alert, Dimensions, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -64,14 +64,25 @@ const Report = ({ navigation }) => {
     }
   };
 
+  const removeImage = () => {
+    setImageUri(null);
+  };
+
+  const submitImage = () => {
+    // Handle image submission logic here
+    Alert.alert('Image Submitted', 'Your image has been submitted successfully!');
+    removeImage(); // Optionally remove the image after submission
+  };
+
   return (
     <View style={styles.containerrep}>
+      <ScrollView contentContainerStyle={styles.scrollrep}>
       <View>
         <Text style={styles.textrep}>Want to photograph?</Text>
       </View>
 
       {/* Buttons container */}
-      <View style={styles.buttonContainer}>
+      <View style={styles.buttonContainerrep}>
         <TouchableOpacity style={styles.iconButtonrep} onPress={openCamera}>
           <Ionicons name="camera" size={30} color="white" />
           <Text style={styles.iconText}>Open Camera</Text>
@@ -83,28 +94,34 @@ const Report = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {imageUri && <Image source={{ uri: imageUri }} style={styles.imagerep} />}
+      {imageUri && (
+        <>
+          <Image source={{ uri: imageUri }} style={styles.imagerep} />
+          <View style={styles.buttonContainerrep}>
+            <TouchableOpacity style={styles.actionButton} onPress={submitImage}>
+              <Text style={styles.actionButtonText}>Submit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.actionButton} onPress={removeImage}>
+              <Text style={styles.actionButtonText}>Remove</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
 
       <View style={styles.descreport}>
-        <Text style={styles.licensetxt}>
-          Car License Plate
-        </Text>
-
+        <Text style={styles.licensetxt}>Car License Plate</Text>
         <Text style={styles.licenserepdesc}>
           Make sure the car license plate is visible
         </Text>
       </View>
 
       <View style={styles.descreport}>
-        <Text style={styles.licensetxt}>
-          Car Image
-        </Text>
-
+        <Text style={styles.licensetxt}>Car Image</Text>
         <Text style={styles.licenserepdesc}>
           Capture the entire car 
         </Text>
       </View>
-
+      </ScrollView>
     </View>
   );
 };
@@ -121,7 +138,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  buttonContainer: {
+  buttonContainerrep: {
     marginBottom: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -135,6 +152,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: 200,
     justifyContent: 'center',
+  },
+  actionButton: {
+    backgroundColor: '#90EE90',
+    padding: 10,
+    borderRadius: 10,
+    marginHorizontal: 10,
+    width: 100,
+    alignItems: 'center',
+    marginTop:10,
+  },
+  actionButtonText: {
+    color: 'black',
+    fontSize: 16,
   },
   iconText: {
     color: 'black',
@@ -150,52 +180,34 @@ const styles = StyleSheet.create({
     alignItems:"center",
     paddingBottom:140,
   },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#000',
-    padding: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
-    width: '100%',
-    position: 'absolute',
-    bottom: 0,
-    height: height*0.08, // Responsive footer height
-    zIndex: 2, // Ensures the footer is on top of other content
+  descreport: {
+    margin:"auto",
+    borderRadius: 15,
+    borderColor: '#000',
+    borderWidth: 2,
+    width: "80%",
+    alignContent: "center",
+    justifyContent:"space-between",
+    marginBottom:25,
   },
-  footerButton: {
-    alignItems: 'center',
+  licensetxt: {
+    margin: 5,
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 17,
   },
-  footerButtonText: {
-    color: 'white',
-    fontSize: width * 0.03, // Responsive font size
-    marginTop: 4,
+  licenserepdesc: {
+    margin: 5,
+    fontSize: 15,
+    display: "flex",
   },
-  descreport:{
-    margin:10,
-    borderRadius:15,
-    borderColor:'#000',
-    borderWidth:2,
-    width:"80%",
-    alignContent:"center",
-    marginBottom:15,
+  scrollrep:{
+    flexGrow:1,
+    paddingBottom: height * 0.08, 
+    paddingVertical:20,
     
   },
-
-  licensetxt:{
-    margin:5,
-    fontWeight:"bold",
-    textAlign:"center",
-    fontSize:17,
-
-  },
-
-  licenserepdesc:{
-    margin:5,
-    fontSize:15,
-    display:"flex",
-  }
+  
 });
 
 export default Report;
