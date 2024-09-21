@@ -1,8 +1,9 @@
 import { useUser } from '@clerk/clerk-expo';
-import React, { useState } from 'react';
-import { StyleSheet, Dimensions, Text, TextInput, View, TouchableOpacity, ActivityIndicator, ScrollView, Image, Alert } from 'react-native';
+import React, { useState,useEffect } from 'react';
+import { StyleSheet, Dimensions, Text, TextInput, View, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
 
 const { width: w } = Dimensions.get('window');
 
@@ -85,24 +86,24 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: 'center',
     width: '60%',
-    marginTop:20,
+    marginTop: 20,
   },
-  reguploaddoc:{
-    backgroundColor:'#90EE90',
-    paddingVertical:10,
-    paddingHorizontal:10,
-    borderRadius:25,
-    alignItems:'center',
-    width:'60%',
+  reguploaddoc: {
+    backgroundColor: '#90EE90',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 25,
+    alignItems: 'center',
+    width: '60%',
   },
   buttonRegisterText: {
     color: '#000',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  scrollreg:{
-    flexGrow:1,
-    paddingVertical:20,
+  scrollreg: {
+    flexGrow: 1,
+    paddingVertical: 20,
   },
   imagePreview: {
     width: '100%',
@@ -112,16 +113,26 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#00716F',
   },
-  
 });
-
 
 const Profile = () => {
   const [username, setUsername] = useState<string>('');
+  const [firstname, setFirstName] = useState<string>(''); // Added firstName state
+  const [lastname, setLastName] = useState<string>(''); // Added lastName state
+  const [email, setEmail] = useState<string>(''); // Added email state
+  const [mobile, setMobile] = useState<string>(''); // Added mobile state
+  const [vehicleno, setVehicleNumber] = useState<string>(''); // Added vehicleNumber state
   const { user } = useUser();
 
   const [imageUri, setImageUri] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (user?.emailAddresses?.[0]?.emailAddress) {
+      setEmail(user.emailAddresses[0].emailAddress);
+    }
+  }, [user]);
+
+  // Request permissions for gallery and camera
   const requestPermissions = async () => {
     try {
       const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
@@ -138,6 +149,7 @@ const Profile = () => {
     }
   };
 
+  // Open image picker to choose an image from gallery
   const openGallery = async () => {
     const hasPermission = await requestPermissions();
     if (!hasPermission) return;
@@ -151,7 +163,6 @@ const Profile = () => {
       });
 
       if (!result.canceled) {
-        console.log(result.assets[0].uri); // Log the URI
         setImageUri(result.assets[0].uri);
       }
     } catch (error) {
@@ -159,98 +170,117 @@ const Profile = () => {
     }
   };
 
-  const handleSubmit = () => {
-    // Handle the image submission here
-    console.log('Image submitted:', imageUri);
+  // Handle profile update and image upload
+  const updateprofilebut = async () => {
+    const userData = {
+      username,
+      email,
+      lastname,
+      firstname,
+      vehicleno,
+      mobile,
+    };
+  
+    try {
+      const res = await axios.post('http://192.168.1.39:5000/profile', userData);
+      console.log("Response Data:", res.data); // Log the response
+    } catch (e) {
+      console.error("Error:", e); // Log any errors
+    }
   };
+    
 
   return (
     <View style={styles.pageregistercontainer}>
       <ScrollView contentContainerStyle={styles.scrollreg}>
-      <Text style={styles.titleuserreg}>Username</Text>
-      <View style={styles.registerusername}>
-        <AntDesign name="user" color="#00716F" size={24} />
-        <TextInput
-          style={styles.registertextuser}
-          placeholder="Enter your username"
-          value={username}
-          onChangeText={setUsername}
-        />
-      </View>
+        <Text style={styles.titleuserreg}>Username</Text>
+        <View style={styles.registerusername}>
+          <AntDesign name="user" color="#00716F" size={24} />
+          <TextInput
+            style={styles.registertextuser}
+            placeholder="Enter your username"
+            value={username}
+            onChangeText={setUsername}
+          />
+        </View>
 
-      <View style={styles.registernamescontainer}>
-        <View style={styles.registerfirstname}>
-          <Text style={styles.firstnametitle}>First Name</Text>
-          <View style={styles.registerusername}>
-            <AntDesign name="user" color="#00716F" size={24} />
-            <TextInput
-              style={styles.registertextuser}
-              placeholder="First Name"
-            />
+        <View style={styles.registernamescontainer}>
+          <View style={styles.registerfirstname}>
+            <Text style={styles.firstnametitle}>First Name</Text>
+            <View style={styles.registerusername}>
+              <AntDesign name="user" color="#00716F" size={24} />
+              <TextInput
+                style={styles.registertextuser}
+                placeholder="First Name"
+                value={firstname}
+                onChangeText={setFirstName}
+              />
+            </View>
+          </View>
+
+          <View style={styles.registerlastname}>
+            <Text style={styles.lastnametitle}>Last Name</Text>
+            <View style={styles.registerusername}>
+              <AntDesign name="user" color="#00716F" size={24} />
+              <TextInput
+                style={styles.registertextuser}
+                placeholder="Last Name"
+                value={lastname}
+                onChangeText={setLastName}
+              />
+            </View>
           </View>
         </View>
 
-        <View style={styles.registerlastname}>
-          <Text style={styles.lastnametitle}>Last Name</Text>
-          <View style={styles.registerusername}>
-            <AntDesign name="user" color="#00716F" size={24} />
-            <TextInput
-              style={styles.registertextuser}
-              placeholder="Last Name"
-            />
-          </View>
+        <Text style={styles.titleuserreg}>Email Address</Text>
+        <View style={styles.registerusername}>
+          <AntDesign name="mail" color="#00716F" size={24} />
+          <TextInput
+            style={styles.registertextuser}
+            placeholder="Enter your mail ID"
+            value={email}
+            editable={false}
+            onChangeText={setEmail}
+          />
         </View>
-      </View>
 
-      <Text style={styles.titleuserreg}>Email Address</Text>
-      <View style={styles.registerusername}>
-        <AntDesign name="mail" color="#00716F" size={24} />
-        <TextInput
-          style={styles.registertextuser}
-          placeholder="Enter your mail ID"
-          value={user?.emailAddresses[0].emailAddress || ''}
-          editable={false} 
-        />
-      </View>
-
-      <Text style={styles.titleuserreg}>Phone Number</Text>
-      <View style={styles.registerusername}>
-        <AntDesign name="phone" color="#00716F" size={24} />
-        <TextInput
-          style={styles.registertextuser}
-          placeholder="Enter your phone no"
-        />
-      </View>
-
-      <Text style={styles.titleuserreg}>Vehicle Number</Text>
-      <View style={styles.registerusername}>
-        <AntDesign name="phone" color="#00716F" size={24} />
-        <TextInput
-          style={styles.registertextuser}
-          placeholder="Enter your vehicle's license plate no"
-        />
-      </View>
-
-      <View style={styles.buttoncontregContainer}>
-
-
-        <TouchableOpacity style={styles.reguploaddoc} onPress={openGallery}>
-          <Text style={styles.buttonRegisterText}>Proof Image</Text>
-        </TouchableOpacity>
-
-        {imageUri && <Image source={{ uri: imageUri }} style={styles.imagePreview} />}
-
-        
-
-        <TouchableOpacity style={styles.buttoncontinuereg}>
-          <Text style={styles.buttonRegisterText}>Update</Text>
-        </TouchableOpacity>
-
-        
+        <Text style={styles.titleuserreg}>Phone Number</Text>
+        <View style={styles.registerusername}>
+          <AntDesign name="phone" color="#00716F" size={24} />
+          <TextInput
+            style={styles.registertextuser}
+            placeholder="Enter your phone no"
+            value={mobile}  // Bind the value to mobile state
+            onChangeText={setMobile}
+          />
         </View>
-        </ScrollView>
+
+        <Text style={styles.titleuserreg}>Vehicle Number</Text>
+        <View style={styles.registerusername}>
+          <AntDesign name="car" color="#00716F" size={24} />
+          <TextInput
+            style={styles.registertextuser}
+            placeholder="Enter your vehicle's license plate no"
+            value={vehicleno}
+            onChangeText={setVehicleNumber}
+          />
+        </View>
+
+        <View style={styles.buttoncontregContainer}>
+          <TouchableOpacity style={styles.reguploaddoc} onPress={openGallery}>
+            <Text style={styles.buttonRegisterText}>Proof Image</Text>
+          </TouchableOpacity>
+
+          {imageUri && <Image source={{ uri: imageUri }} style={styles.imagePreview} />}
+
+          <TouchableOpacity style={styles.buttoncontinuereg} onPress={updateprofilebut}>
+            <Text style={styles.buttonRegisterText}>Update</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 };
 
 export default Profile;
+
