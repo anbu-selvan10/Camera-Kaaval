@@ -80,7 +80,7 @@ const Home = () => {
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <View style={[styles.userfpcontainer, { width: w * 0.95 }]}>
           <Image 
-            source={require('/Camera Kaaval/camera-kaaval/assets/images/sliderimg2.jpeg')} 
+            source={require("/camera_kaaval_clerk/Camera-Kaaval/assets/images/sliderimg2.jpeg")} 
             style={styles.imagefituserfp} 
             resizeMode="cover" 
           />
