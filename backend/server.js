@@ -20,8 +20,11 @@ mongoose
   });
 
 require("./models/UserDetails.js");
+require("./models/ReportDetails.js");
 
 const User = mongoose.model("user");
+const Report=mongoose.model("report");
+
 
 app.post("/profile", async (req, res) => {
   const { username, email, lastname, firstname, mobile, vehicleno } = req.body;
@@ -67,6 +70,42 @@ app.get("/checkemail/:email", async (req, res) => {
   }
 });
 
+app.post("/submit-report", async (req, res) => {
+  console.log("Received report data:", JSON.stringify(req.body, null, 2)); // Add this log
+
+  const { imageUrl, location, coordinates, googleMapsUrl, description } = req.body;
+
+  try {
+    if (!imageUrl || !location || !coordinates || !description) {
+      throw new Error("Missing required fields: imageUrl, location, coordinates, or description");
+    }
+
+    if (!googleMapsUrl) {
+      console.log("googleMapsUrl not provided, generating from coordinates");
+      googleMapsUrl = `https://www.google.com/maps?q=${coordinates.latitude},${coordinates.longitude}`;
+    }
+
+    const reportData = {
+      imageUrl,
+      location,
+      coordinates,
+      description: description.trim(),
+      googleMapsUrl
+    };
+
+    console.log("Creating report with data:", JSON.stringify(reportData, null, 2)); // Add this log
+
+    const newReport = await Report.create(reportData);
+
+    console.log("Report Created:", newReport);
+    res.status(200).send({ status: "ok", data: "Report submitted successfully" });
+  } catch (error) {
+    console.error("Error Creating Report:", error);
+    res.status(400).send({ status: "error", message: "Error submitting report", error: error.message });
+  }
+});
+
+
 app.listen(5000, () => {
-  console.log("Server is started");
+  console.log("Server is started on port 5000");
 });

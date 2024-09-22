@@ -54,6 +54,18 @@ const TabsPage = () => {
       />
 
       <Tabs.Screen
+        name="status"
+        options={{
+          headerTitle: "Status",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="description" size={size} color={color} />
+          ),
+          tabBarLabel: "Status",
+        }}
+        redirect={!isSignedIn}
+      />
+
+      <Tabs.Screen
         name="profile"
         options={{
           headerTitle: "My Profile",

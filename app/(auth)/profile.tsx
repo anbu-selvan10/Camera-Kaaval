@@ -26,52 +26,52 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   titlescaleregister: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 20,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: '#F5F5F5',
     borderRadius: 10,
     marginBottom: 20,
   },
   titleregister: {
     flex: 1,
     fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   backregister: {
-    position: "absolute",
+    position: 'absolute',
     left: 10,
     zIndex: 10,
   },
   registerusername: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: "#00716F",
+    borderColor: '#00716F',
     borderRadius: 23,
     paddingHorizontal: 10,
     paddingVertical: 2,
-    width: "100%",
+    width: '100%',
     marginVertical: 10,
   },
   titleuserreg: {
     fontSize: 15,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
     marginVertical: 10,
   },
   firstnametitle: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 5,
   },
   lastnametitle: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 5,
   },
   registernamescontainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 20,
   },
   registerfirstname: {
@@ -88,43 +88,48 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
   },
-  buttoncontregContainer: {
-    alignItems: "center",
-    marginTop: 20,
-  },
-  buttoncontinuereg: {
-    backgroundColor: "#90EE90",
+  reguploaddoc: {
+    backgroundColor: '#90EE90',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 25,
-    alignItems: "center",
-    width: "60%",
-    marginTop: 20,
+    alignItems: 'center',
+    width: '80%', // Set width to a percentage of the screen width
+    marginTop: 20, // Add margin for space between buttons
+    width: w * 0.5, // 60% of screen width
+    marginLeft: w* 0.2, // Center align by adding margin
   },
-  reguploaddoc: {
-    backgroundColor: "#90EE90",
+  buttoncontinuereg: {
+    backgroundColor: '#90EE90',
     paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     borderRadius: 25,
-    alignItems: "center",
-    width: "60%",
+    alignItems: 'center',
+    width: '80%', // Set width to a percentage of the screen width
+    marginTop: 20, // Add margin for space between buttons
+    width: w * 0.5, // 60% of screen width
+    marginLeft: w * 0.2, // Center align by adding margin
   },
   buttonRegisterText: {
-    color: "#000",
+    color: '#000',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
+  },
+  buttoncontregContainer: {
+    alignItems: 'center',
+    marginTop: 20,
   },
   scrollreg: {
     flexGrow: 1,
     paddingVertical: 20,
   },
   imagePreview: {
-    width: "100%",
+    width: '100%',
     height: 200,
     borderRadius: 10,
     marginVertical: 10,
     borderWidth: 1,
-    borderColor: "#00716F",
+    borderColor: '#00716F',
   },
 });
 
@@ -149,7 +154,7 @@ const Profile = () => {
       checkEmail(); // Check if user exists when email is loaded
     }
   }, [email]);
-
+ 
   
 
   // Fetch user details if email exists in DB
@@ -408,3 +413,4 @@ const Profile = () => {
 };
 
 export default Profile;
+ 
