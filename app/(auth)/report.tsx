@@ -6,6 +6,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Location from 'expo-location'; // Import Location module
 import { firebase } from '../../config.js';
 import axios from "axios";
+import { useUser } from "@clerk/clerk-expo";
 
 const w = Dimensions.get('window').width;
 const { height, width } = Dimensions.get('window');
@@ -19,6 +20,9 @@ const Report = ({ navigation }) => {
   const [loadingLocation, setLoadingLocation] = useState<boolean>(true);
   const [description, setDescription] = useState<string | null>(null);
   const [googleMapsUrl, setGoogleMapsUrl] = useState<string | null>(null); // State for Google Maps URL
+  const { user } = useUser();
+
+  const email = user?.emailAddresses?.[0]?.emailAddress || "";
 
   const getLocation = async () => {
     try {
@@ -202,11 +206,12 @@ const Report = ({ navigation }) => {
             },
             googleMapsUrl,
             description,
+            email
           };
 
           try {
             const res = await axios.post(
-              `http://192.168.152.242:5000/submit-report`,
+              `http://x.x.x.x:5000/submit-report`,
               reportData
             );
             console.log("Response Data:", res.data);

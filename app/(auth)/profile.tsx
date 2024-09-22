@@ -1,5 +1,5 @@
-import { useUser } from "@clerk/clerk-expo"; // Clerk's user hook
-import React, { useState, useEffect } from "react";
+import { useUser } from "@clerk/clerk-expo";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   Dimensions,
@@ -11,12 +11,13 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
-import { firebase } from '../../config.js';
-import * as FileSystem from 'expo-file-system';
+import { firebase } from "../../config.js";
+import * as FileSystem from "expo-file-system";
 
 const { width: w } = Dimensions.get("window");
 
@@ -26,52 +27,52 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   titlescaleregister: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: "#F5F5F5",
     borderRadius: 10,
     marginBottom: 20,
   },
   titleregister: {
     flex: 1,
     fontSize: 25,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   backregister: {
-    position: 'absolute',
+    position: "absolute",
     left: 10,
     zIndex: 10,
   },
   registerusername: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: '#00716F',
+    borderColor: "#00716F",
     borderRadius: 23,
     paddingHorizontal: 10,
     paddingVertical: 2,
-    width: '100%',
+    width: "100%",
     marginVertical: 10,
   },
   titleuserreg: {
     fontSize: 15,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginVertical: 10,
   },
   firstnametitle: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   lastnametitle: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   registernamescontainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 20,
   },
   registerfirstname: {
@@ -89,34 +90,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   reguploaddoc: {
-    backgroundColor: '#90EE90',
+    backgroundColor: "#90EE90",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 25,
-    alignItems: 'center',
-    width: '80%', // Set width to a percentage of the screen width
+    alignItems: "center",
+    width: "80%", // Set width to a percentage of the screen width
     marginTop: 20, // Add margin for space between buttons
     width: w * 0.5, // 60% of screen width
-    marginLeft: w* 0.2, // Center align by adding margin
+    marginLeft: w * 0.2, // Center align by adding margin
   },
   buttoncontinuereg: {
-    backgroundColor: '#90EE90',
+    backgroundColor: "#90EE90",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 25,
-    alignItems: 'center',
-    width: '80%', // Set width to a percentage of the screen width
+    alignItems: "center",
+    width: "80%", // Set width to a percentage of the screen width
     marginTop: 20, // Add margin for space between buttons
     width: w * 0.5, // 60% of screen width
     marginLeft: w * 0.2, // Center align by adding margin
   },
   buttonRegisterText: {
-    color: '#000',
+    color: "#000",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   buttoncontregContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
   },
   scrollreg: {
@@ -124,12 +125,12 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   imagePreview: {
-    width: '100%',
+    width: "100%",
     height: 200,
     borderRadius: 10,
     marginVertical: 10,
     borderWidth: 1,
-    borderColor: '#00716F',
+    borderColor: "#00716F",
   },
 });
 
@@ -141,10 +142,11 @@ const Profile = () => {
   const [vehicleno, setVehicleNumber] = useState<string>("");
   const [userFound, setUserFound] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { user } = useUser(); // Get user data from Clerk
+  const { user } = useUser();
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
   const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   // Automatically populate email from Clerk
   const email = user?.emailAddresses?.[0]?.emailAddress || "";
@@ -154,8 +156,6 @@ const Profile = () => {
       checkEmail(); // Check if user exists when email is loaded
     }
   }, [email]);
- 
-  
 
   // Fetch user details if email exists in DB
   const checkEmail = async () => {
@@ -163,7 +163,7 @@ const Profile = () => {
 
     try {
       const response = await axios.get(
-        `http://192.168.152.242:5000/checkemail/${email}`
+        `http://x.x.x.x:5000/checkemail/${email}`
       );
       if (response.data.status === "exists") {
         const userData = response.data.data;
@@ -184,6 +184,11 @@ const Profile = () => {
       setIsLoading(false); // End loading
     }
   };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true); // Start refreshing
+    checkEmail().finally(() => setRefreshing(false)); // End refreshing
+  }, []);
 
   // Request permissions for gallery and camera
   const requestPermissions = async () => {
@@ -236,12 +241,12 @@ const Profile = () => {
       lastname,
       firstname,
       mobile,
-      vehicleno
+      vehicleno,
     };
 
     try {
       const res = await axios.post(
-        `http://192.168.152.242:5000/profile`,
+        `http://x.x.x.x:5000/profile`,
         userData
       );
       console.log("Response Data:", res.data);
@@ -265,7 +270,7 @@ const Profile = () => {
 
   const uploadImage = async () => {
     setUploading(true);
-  
+
     try {
       const { uri } = await FileSystem.getInfoAsync(imageUri);
       const blob = await new Promise((resolve, reject) => {
@@ -274,13 +279,13 @@ const Profile = () => {
           resolve(xhr.response);
         };
         xhr.onerror = () => {
-          reject(new TypeError('Network request failed'));
+          reject(new TypeError("Network request failed"));
         };
-        xhr.responseType = 'blob';
-        xhr.open('GET', uri, true);
+        xhr.responseType = "blob";
+        xhr.open("GET", uri, true);
         xhr.send(null);
       });
-  
+
       const sanitizedEmail = String(email);
       const filename = `${sanitizedEmail}-proof`;
 
@@ -289,7 +294,6 @@ const Profile = () => {
       await ref.put(blob);
       setUploading(false);
       Alert.alert("Photo Uploaded");
-
     } catch (error) {
       console.error(error);
       setUploading(false);
@@ -298,7 +302,12 @@ const Profile = () => {
 
   return (
     <View style={styles.pageregistercontainer}>
-      <ScrollView contentContainerStyle={styles.scrollreg}>
+      <ScrollView
+        contentContainerStyle={styles.scrollreg}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {isLoading ? (
           <ActivityIndicator size="large" color="#00716F" />
         ) : userFound ? (
@@ -330,7 +339,7 @@ const Profile = () => {
                 onChangeText={setUsername}
               />
             </View>
-  
+
             {/* Form will only be displayed when user not found */}
             <Text style={styles.titleuserreg}>First Name</Text>
             <View style={styles.registerusername}>
@@ -342,7 +351,7 @@ const Profile = () => {
                 onChangeText={setFirstName}
               />
             </View>
-  
+
             <Text style={styles.titleuserreg}>Last Name</Text>
             <View style={styles.registerusername}>
               <AntDesign name="user" color="#00716F" size={24} />
@@ -353,7 +362,7 @@ const Profile = () => {
                 onChangeText={setLastName}
               />
             </View>
-  
+
             <Text style={styles.titleuserreg}>Email Address</Text>
             <View style={styles.registerusername}>
               <AntDesign name="mail" color="#00716F" size={24} />
@@ -364,7 +373,7 @@ const Profile = () => {
                 editable={false} // Make email read-only, since it's fetched from Clerk
               />
             </View>
-  
+
             <Text style={styles.titleuserreg}>Phone Number</Text>
             <View style={styles.registerusername}>
               <AntDesign name="phone" color="#00716F" size={24} />
@@ -375,7 +384,7 @@ const Profile = () => {
                 onChangeText={setMobile}
               />
             </View>
-  
+
             <Text style={styles.titleuserreg}>Vehicle Number</Text>
             <View style={styles.registerusername}>
               <AntDesign name="car" color="#00716F" size={24} />
@@ -386,19 +395,19 @@ const Profile = () => {
                 onChangeText={setVehicleNumber}
               />
             </View>
-  
+
             <TouchableOpacity style={styles.reguploaddoc} onPress={openGallery}>
               <Text style={styles.buttonRegisterText}>Proof Image</Text>
             </TouchableOpacity>
-  
+
             {imageUri && (
               <Image source={{ uri: imageUri }} style={styles.imagePreview} />
             )}
-  
+
             <TouchableOpacity style={styles.reguploaddoc} onPress={uploadImage}>
               <Text style={styles.buttonRegisterText}>Upload Photo</Text>
             </TouchableOpacity>
-  
+
             <TouchableOpacity
               style={styles.buttoncontinuereg}
               onPress={updateProfile}
@@ -413,4 +422,3 @@ const Profile = () => {
 };
 
 export default Profile;
- 

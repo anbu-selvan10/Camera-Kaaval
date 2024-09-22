@@ -71,9 +71,7 @@ app.get("/checkemail/:email", async (req, res) => {
 });
 
 app.post("/submit-report", async (req, res) => {
-  console.log("Received report data:", JSON.stringify(req.body, null, 2)); // Add this log
-
-  const { imageUrl, location, coordinates, googleMapsUrl, description } = req.body;
+  const { imageUrl, location, coordinates, googleMapsUrl, description, email } = req.body;
 
   try {
     if (!imageUrl || !location || !coordinates || !description) {
@@ -90,10 +88,9 @@ app.post("/submit-report", async (req, res) => {
       location,
       coordinates,
       description: description.trim(),
-      googleMapsUrl
+      googleMapsUrl,
+      email
     };
-
-    console.log("Creating report with data:", JSON.stringify(reportData, null, 2)); // Add this log
 
     const newReport = await Report.create(reportData);
 
@@ -102,6 +99,19 @@ app.post("/submit-report", async (req, res) => {
   } catch (error) {
     console.error("Error Creating Report:", error);
     res.status(400).send({ status: "error", message: "Error submitting report", error: error.message });
+  }
+});
+
+app.post('/getReports', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Use `find` to get all reports related to the email
+    const reports = await Report.find({ email });
+    res.status(200).json({ reports });
+  } catch (error) {
+    console.error('Error fetching reports:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
