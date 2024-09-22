@@ -158,7 +158,7 @@ const Profile = () => {
 
     try {
       const response = await axios.get(
-        `http://x.x.x.x:5000/checkemail/${email}`
+        `http://192.168.152.242:5000/checkemail/${email}`
       );
       if (response.data.status === "exists") {
         const userData = response.data.data;
@@ -236,7 +236,7 @@ const Profile = () => {
 
     try {
       const res = await axios.post(
-        `http://x.x.x.x:5000/profile`,
+        `http://192.168.152.242:5000/profile`,
         userData
       );
       console.log("Response Data:", res.data);
