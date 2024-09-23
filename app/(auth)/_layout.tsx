@@ -58,9 +58,21 @@ const TabsPage = () => {
         options={{
           headerTitle: "Status",
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="description" size={size} color={color} />
+            <MaterialIcons name="check-circle" size={size} color={color} />
           ),
           tabBarLabel: "Status",
+        }}
+        redirect={!isSignedIn}
+      />
+
+      <Tabs.Screen
+        name="pay"
+        options={{
+          headerTitle: "Pay",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="currency-rupee" size={size} color={color} />
+          ),
+          tabBarLabel: "Pay",
         }}
         redirect={!isSignedIn}
       />

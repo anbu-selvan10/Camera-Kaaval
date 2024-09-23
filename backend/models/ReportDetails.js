@@ -21,6 +21,10 @@ const reportSchema = new mongoose.Schema(
       type: Boolean,
       default: false, // Default set to false
     },
+    status: {
+      type: String,
+      default: "Pending"
+    }
   },
   {
     collection: "Reports",

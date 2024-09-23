@@ -81,6 +81,9 @@ const ReportComponent = () => {
             <Text style={styles.text}>
               Verified: {report.isVerified ? "Yes" : "No"}
             </Text>
+            <Text style={styles.text}>
+              Status: {report.status}
+            </Text>
           </View>
         ))
       )}

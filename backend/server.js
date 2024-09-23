@@ -21,10 +21,11 @@ mongoose
 
 require("./models/UserDetails.js");
 require("./models/ReportDetails.js");
+require("./models/FineDetails.js");
 
 const User = mongoose.model("user");
-const Report=mongoose.model("report");
-
+const Report = mongoose.model("report");
+const Fine = mongoose.model("fine");
 
 app.post("/profile", async (req, res) => {
   const { username, email, lastname, firstname, mobile, vehicleno } = req.body;
@@ -112,6 +113,27 @@ app.post('/getReports', async (req, res) => {
   } catch (error) {
     console.error('Error fetching reports:', error);
     res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+app.post("/findFinesByEmail", async (req, res) => {
+  const { email } = req.body; // Extract email from request body
+
+  try {
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const fines = await Fine.find({ email });
+
+    if (fines.length === 0) {
+      return res.status(200).json({ message: "No fines found for this email" });
+    }
+
+    res.status(200).json(fines);
+  } catch (error) {
+    console.error("Error querying fines:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
