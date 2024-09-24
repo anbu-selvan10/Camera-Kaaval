@@ -18,6 +18,7 @@ import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import { firebase } from "../../config.js";
 import * as FileSystem from "expo-file-system";
+import { IP } from "@env";
 
 const { width: w } = Dimensions.get("window");
 
@@ -163,7 +164,7 @@ const Profile = () => {
 
     try {
       const response = await axios.get(
-        `http://x.x.x.x:5000/checkemail/${email}`
+        `http://${IP}/checkemail/${email}`
       );
       if (response.data.status === "exists") {
         const userData = response.data.data;
@@ -246,7 +247,7 @@ const Profile = () => {
 
     try {
       const res = await axios.post(
-        `http://x.x.x.x:5000/profile`,
+        `http://${IP}/profile`,
         userData
       );
       console.log("Response Data:", res.data);

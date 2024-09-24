@@ -29,18 +29,7 @@ const TabsPage = () => {
         headerTintColor: "#fff",
       }}
     >
-      <Tabs.Screen
-        name="home"
-        options={{
-          headerTitle: "Home",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
-          ),
-          tabBarLabel: "Home",
-        }}
-        redirect={!isSignedIn}
-      />
-
+      
       <Tabs.Screen
         name="report"
         options={{
@@ -73,6 +62,18 @@ const TabsPage = () => {
             <MaterialIcons name="currency-rupee" size={size} color={color} />
           ),
           tabBarLabel: "Pay",
+        }}
+        redirect={!isSignedIn}
+      />
+
+<Tabs.Screen
+        name="rewards"
+        options={{
+          headerTitle: "Rewards",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="emoji-events" size={size} color={color} />
+          ),
+          tabBarLabel: "Rewards",
         }}
         redirect={!isSignedIn}
       />

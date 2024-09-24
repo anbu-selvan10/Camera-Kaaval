@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useUser } from "@clerk/clerk-expo";
 import axios from "axios";
+import { IP } from "@env";
 
 const ReportComponent = () => {
   const { user } = useUser();
@@ -23,7 +24,7 @@ const ReportComponent = () => {
     try {
       const email = user?.emailAddresses?.[0]?.emailAddress || "";
       const response = await axios.post(
-        "http://x.x.x.x:5000/getReports",
+        `http://${IP}/getReports`,
         {
           email: email,
         }
@@ -42,7 +43,7 @@ const ReportComponent = () => {
     try {
       const email = user?.emailAddresses?.[0]?.emailAddress || "";
       const response = await axios.post(
-        "http://x.x.x.x:5000/getReports",
+        `http://${IP}/getReports`,
         {
           email: email,
         }

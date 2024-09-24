@@ -7,6 +7,7 @@ import * as Location from 'expo-location'; // Import Location module
 import { firebase } from '../../config.js';
 import axios from "axios";
 import { useUser } from "@clerk/clerk-expo";
+import { IP } from "@env";
 
 const w = Dimensions.get('window').width;
 const { height, width } = Dimensions.get('window');
@@ -211,7 +212,7 @@ const Report = ({ navigation }) => {
 
           try {
             const res = await axios.post(
-              `http://x.x.x.x:5000/submit-report`,
+              `http://${IP}/submit-report`,
               reportData
             );
             console.log("Response Data:", res.data);

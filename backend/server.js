@@ -137,6 +137,40 @@ app.post("/findFinesByEmail", async (req, res) => {
   }
 });
 
+app.post("/payFine", async (req, res) => {
+  const { id } = req.body; 
+
+  try {
+    const fine = await Fine.findById(id);
+    if (!fine) {
+      return res.status(404).json({ message: "Fine not found" });
+    }
+    fine.status = "Paid";
+    await fine.save();
+
+    return res.status(200).json({ message: "Fine status updated to Paid" });
+  } catch (error) {
+    console.error("Error updating fine status:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.post("/rewards", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const fines = await Fine.find({ reportedBy: email });
+
+    if (fines.length === 0) {
+      return res.status(200).json({ message: "No rewards yet" });
+    }
+
+    return res.status(200).json(fines);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "An error occurred while fetching rewards" });
+  }
+});
 
 app.listen(5000, () => {
   console.log("Server is started on port 5000");

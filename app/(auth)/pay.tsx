@@ -1,4 +1,4 @@
-import { useUser } from "@clerk/clerk-expo"; // Assuming you're using Clerk for user authentication
+import { useUser } from "@clerk/clerk-expo";
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import {
@@ -12,28 +12,27 @@ import {
   RefreshControl,
   Alert,
 } from "react-native";
+import { IP } from "@env";
 
 const Pay = () => {
-  const { user } = useUser(); // Fetch the user from Clerk
+  const { user } = useUser();
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-
   const email = user?.emailAddresses?.[0]?.emailAddress || "";
 
-  // Function to fetch reports from backend using Axios
+
+
   const fetchReports = async (email) => {
     try {
       const response = await axios.post(
-        "http://x.x.x.x:5000/findFinesByEmail",
-        {
-          email, // Email from the Clerk user
-        }
+        `http://${IP}/findFinesByEmail`,
+        { email }
       );
       if (response.data.message === "No fines found for this email") {
         return [];
       }
-      return response.data; // This should contain the array of reports
+      return response.data;
     } catch (error) {
       console.error("Error fetching reports:", error);
       Alert.alert("Error", "Failed to load reports");
@@ -41,16 +40,14 @@ const Pay = () => {
     }
   };
 
-  // Helper function to format date as DD-MM-YYYY
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
 
-  // Function to load reports using the Clerk user's email
   const loadReports = async () => {
     if (!email) {
       Alert.alert("Error", "User email not available");
@@ -71,15 +68,30 @@ const Pay = () => {
     loadReports();
   }, []);
 
-  // Refresh control handler
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     loadReports().finally(() => setRefreshing(false));
   }, []);
 
-  // Function to handle Pay button press
-  const handlePayPress = (amount) => {
-    Alert.alert("Payment", `You pressed Pay for $${amount}`);
+  const handlePayPress = async (fineId, amount) => {
+    Alert.alert("Payment", `You pressed Pay for ₹${amount}`);
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    try {
+      const response = await axios.post(`http://${IP}/payFine`, {
+        id: fineId, // Send the _id to the backend
+      });
+
+      if (response.data.message === "Fine status updated to Paid") {
+        Alert.alert("Success", `Amount ₹${amount} paid successfully.`);
+        loadReports(); // Refresh the reports to reflect the change
+      } else {
+        Alert.alert("Error", "Failed to update fine status");
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      Alert.alert("Error", "Failed to process payment");
+    }
   };
 
   if (loading) {
@@ -93,11 +105,8 @@ const Pay = () => {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
-      {/* Check if reports is an empty array */}
       {reports.length === 0 ? (
         <View style={styles.noFinesContainer}>
           <Text style={styles.noFinesText}>No fines found</Text>
@@ -108,18 +117,14 @@ const Pay = () => {
             <Text style={styles.description}>{report.description}</Text>
             <Text style={styles.status}>Status: {report.status}</Text>
             <Text style={styles.date}>Date: {formatDate(report.createdAt)}</Text>
-            {report.status == "Unpaid" ? (
-                <>
-                <TouchableOpacity
-              style={styles.payButton}
-              onPress={() => handlePayPress(report.amount)}
-            >
-              <Text style={styles.payButtonText}>Pay ₹{report.amount}</Text>
-            </TouchableOpacity>
-            </>) : (
-                <></>
-            )
-            }
+            {report.status === "Unpaid" && (
+              <TouchableOpacity
+                style={styles.payButton}
+                onPress={() => handlePayPress(report._id, report.amount)}
+              >
+                <Text style={styles.payButtonText}>Pay ₹{report.amount}</Text>
+              </TouchableOpacity>
+            )}
           </View>
         ))
       )}
@@ -128,6 +133,7 @@ const Pay = () => {
 };
 
 export default Pay;
+
 
 const styles = StyleSheet.create({
     container: {
