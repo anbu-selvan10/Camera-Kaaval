@@ -72,7 +72,7 @@ const Rewards = () => {
       {rewards.length > 0 ? (
         rewards.map((reward) => (
           <View key={reward._id} style={styles.rewardCard}>
-            <Text style={styles.rewardText}>Report ID: {reward._id}</Text>
+            <Text style={styles.rewardText}>Fine ID: {reward._id}</Text>
             <Text style={styles.rewardText}>
               Date: {new Date(reward.createdAt).toLocaleDateString()}
             </Text>

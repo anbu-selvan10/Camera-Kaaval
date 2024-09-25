@@ -20,6 +20,7 @@ import { firebase } from "../../config.js";
 import * as FileSystem from "expo-file-system";
 import { IP } from "@env";
 
+
 const { width: w } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
@@ -132,6 +133,42 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderWidth: 1,
     borderColor: "#00716F",
+  },
+  titleuserreg: {
+    fontSize: 24, // Increased font size for the title
+    fontWeight: 'bold',
+    marginBottom: 20, // Adds space below the title
+    textAlign: 'center', // Centers the title
+    color: '#00716F', // Text color
+  },
+  userDetailsText: {
+    fontSize: 15, // Adjusted font size for user details
+    marginBottom: 10, // Adds space between lines of user details
+    color: '#333', // Dark color for text
+  },
+  userDetailContainer: {
+    backgroundColor: '#fff', // White background for details container
+    borderRadius: 10, // Rounded corners
+    padding: 15, // Padding inside the container
+    shadowColor: '#000', // Shadow color for the container
+    shadowOffset: { width: 0, height: 2 }, // Shadow offset
+    shadowOpacity: 0.1, // Shadow opacity
+    shadowRadius: 5, // Shadow blur radius
+    elevation: 3, // Elevation for Android shadow effect
+    marginBottom: 20, // Space between this container and next one
+    width: w * 0.9, // Make the width 90% of the screen
+  },
+  activityIndicator: {
+    marginTop: 20, // Adds space above the activity indicator
+  },
+  pageregistercontainer: {
+    flex: 1,
+    padding: 20, // Adds padding around the whole container
+    backgroundColor: '#f5f5f5', // Background color for the container
+  },
+  scrollreg: {
+    flexGrow: 1,
+    justifyContent: 'center', // Centers content vertically when scrollview is short
   },
 });
 
@@ -314,13 +351,15 @@ const Profile = () => {
         ) : userFound ? (
           isVerified ? ( // Check if the user is verified
             <>
-              <Text style={styles.titleuserreg}>User details:</Text>
-              <Text>User Name: {username}</Text>
-              <Text>First Name: {firstname}</Text>
-              <Text>Last Name: {lastname}</Text>
-              <Text>Email: {email}</Text>
-              <Text>Mobile: {mobile}</Text>
-              <Text>Vehicle Number: {vehicleno}</Text>
+               <View style={styles.userDetailContainer}>
+                  <Text style={styles.titleuserreg}>User details</Text>
+                  <Text style={styles.userDetailsText}>User Name: {username}</Text>
+                  <Text style={styles.userDetailsText}>First Name: {firstname}</Text>
+                  <Text style={styles.userDetailsText}>Last Name: {lastname}</Text>
+                  <Text style={styles.userDetailsText}>Email: {email}</Text>
+                  <Text style={styles.userDetailsText}>Mobile: {mobile}</Text>
+                  <Text style={styles.userDetailsText}>Vehicle Number: {vehicleno}</Text>
+               </View>
             </>
           ) : (
             <Text style={styles.titleuserreg}>

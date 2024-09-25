@@ -114,6 +114,7 @@ const Pay = () => {
       ) : (
         reports.map((report) => (
           <View key={report._id} style={styles.reportCard}>
+            <Text style={styles.description}>Fine Id: {report._id}</Text>
             <Text style={styles.description}>{report.description}</Text>
             <Text style={styles.status}>Status: {report.status}</Text>
             <Text style={styles.date}>Date: {formatDate(report.createdAt)}</Text>
