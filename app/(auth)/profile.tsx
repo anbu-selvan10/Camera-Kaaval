@@ -189,7 +189,7 @@ const Profile = () => {
   // Automatically populate email from Clerk
   const email = user?.emailAddresses?.[0]?.emailAddress || "";
 
-  console.log(IP);
+  console.log(IP); 
 
   useEffect(() => {
     if (email) {

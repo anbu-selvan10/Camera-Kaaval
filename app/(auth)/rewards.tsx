@@ -141,9 +141,8 @@ const styles = StyleSheet.create({
   },
   noRewardsText: {
     fontSize: 18,
-    color: "#999",
-    textAlign: "center",
-    marginTop: 20,
+    fontWeight: "bold",
+    color: "gray",
   },
   loadingContainer: {
     flex: 1,

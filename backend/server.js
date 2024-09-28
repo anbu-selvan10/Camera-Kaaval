@@ -57,6 +57,27 @@ app.post("/profile", async (req, res) => {
   }
 });
 
+app.get('/is-verified', async (req, res) => {
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.json({ isVerified: false });
+    }
+
+    res.json({ isVerified: user.isVerified });
+  } catch (error) {
+    console.error('Error checking verification status:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.get("/checkemail/:email", async (req, res) => {
   const { email } = req.params;
 
@@ -74,7 +95,7 @@ app.get("/checkemail/:email", async (req, res) => {
 });
 
 app.post("/submit-report", async (req, res) => {
-  const { imageUrl, location, coordinates, googleMapsUrl, description, email } = req.body;
+  const { location, coordinates, googleMapsUrl, description, email } = req.body;
   
   try {
     // Check daily limit
@@ -95,7 +116,7 @@ app.post("/submit-report", async (req, res) => {
     }
 
     // Proceed with report submission
-    if (!imageUrl || !location || !coordinates || !description) {
+    if (!location || !coordinates || !description) {
       throw new Error("Missing required fields: imageUrl, location, coordinates, or description");
     }
 
@@ -105,7 +126,6 @@ app.post("/submit-report", async (req, res) => {
     }
 
     const reportData = {
-      imageUrl,
       location,
       coordinates,
       description: description.trim(),
@@ -132,6 +152,48 @@ app.post("/submit-report", async (req, res) => {
   } catch (error) {
     console.error("Error Submitting Report:", error);
     res.status(400).send({ status: "error", message: "Error submitting report", error: error.message });
+  }
+});
+
+app.post("/update-report-image", async (req, res) => {
+  const { email, imageUrl } = req.body;
+
+  if (!email || !imageUrl) {
+    return res.status(400).send({ 
+      status: "error", 
+      message: "Missing required fields: email or imageUrl" 
+    });
+  }
+
+  try {
+    // Find the most recent report for the given email
+    const report = await Report.findOne({ email }).sort({ createdAt: -1 });
+
+    if (!report) {
+      return res.status(404).send({ 
+        status: "error", 
+        message: "No recent report found for this email" 
+      });
+    }
+
+    // Update the report with the image URL
+    report.imageUrl = imageUrl;
+    await report.save();
+
+    console.log("Report updated with image URL:", report);
+
+    res.status(200).send({ 
+      status: "ok", 
+      message: "Report successfully updated with image URL",
+      data: { reportId: report._id }
+    });
+  } catch (error) {
+    console.error("Error updating report with image URL:", error);
+    res.status(500).send({ 
+      status: "error", 
+      message: "Error updating report with image URL", 
+      error: error.message 
+    });
   }
 });
 

@@ -73,14 +73,17 @@ const ReportComponent = () => {
     >
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
-      ) : reports.length === 0 ? (  // Check if reports array is empty
-        <Text style={styles.text}>No reports available.</Text> // Show this message when no reports
+      ) : reports.length === 0 ? ( 
+        <Text style={styles.noReportText}>No reports available.</Text>
       ) : (
         reports.map((report) => (
           <View key={report._id} style={styles.reportBox}>
             <Image source={{ uri: report.imageUrl }} style={styles.image} />
             <Text style={styles.text}>Location: {report.location}</Text>
             <Text style={styles.text}>Description: {report.description}</Text>
+            <Text style={styles.text}>
+              Date: {new Date(report.updatedAt).toLocaleDateString()}
+            </Text>
             <Text style={styles.text}>
               Verified: {report.isVerified ? "Yes" : "No"}
             </Text>
@@ -98,6 +101,11 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     alignItems: "center",
+  },
+  noReportText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "gray",
   },
   reportBox: {
     width: "90%",

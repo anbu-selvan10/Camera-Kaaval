@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, Alert, Dimensions, ScrollView, Linking, TextInput, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Image, Alert, Dimensions, ScrollView, Linking, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
@@ -21,6 +21,8 @@ const Report = ({ navigation }) => {
   const [loadingLocation, setLoadingLocation] = useState<boolean>(true);
   const [description, setDescription] = useState<string | null>(null);
   const [googleMapsUrl, setGoogleMapsUrl] = useState<string | null>(null);
+  const [verified, setVerified] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const { user } = useUser();
 
   const email = user?.emailAddresses?.[0]?.emailAddress || "";
@@ -71,11 +73,33 @@ const Report = ({ navigation }) => {
     }
   };
 
+  const checkVerification = async () => {
+    try {
+      const response = await axios.get(`http://${IP}/is-verified`, {
+        params: { email }
+      });
+      setVerified(response.data.isVerified);
+    } catch (error) {
+      console.error('Error checking verification status:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (email) {
+      checkVerification();
+    }
+  }, [email]);
+
   useEffect(() => {
     if (imageUri) {
       getLocation();
     }
   }, [imageUri]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true); // Start refreshing
+    checkVerification().finally(() => setRefreshing(false)); // End refreshing
+  }, []);
 
   console.log(IP);
 
@@ -143,17 +167,15 @@ const Report = ({ navigation }) => {
     setGoogleMapsUrl(null); // Clear Google Maps URL when image is removed
   };
 
-  const submitreport = async () => {
+  const submitReport = async () => {
     if (!imageUri) {
       Alert.alert("No image selected", "Please select an image to submit.");
       return;
     }
-
     if (!googleMapsUrl) {
       Alert.alert("Location not set", "Please fetch your location before submitting.");
       return;
     }
-  
     if (!description || description.trim() === '') {
       Alert.alert("Description missing", "Please provide a description for the report.");
       return;
@@ -181,68 +203,98 @@ const Report = ({ navigation }) => {
       const filename = imageUri.substring(imageUri.lastIndexOf('/') + 1);
       const storageRef = firebase.storage().ref().child(`Report/${filename}`);
   
-      const uploadTask = storageRef.put(blob);
+      const reportData = {
+        location,
+        coordinates: {
+          latitude: coordinates?.latitude,
+          longitude: coordinates?.longitude,
+        },
+        googleMapsUrl,
+        description,
+        email
+      };
   
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          setTransferred(progress);
-        },
-        (error) => {
-          console.error('Upload failed:', error);
-          setUploading(false);
-          Alert.alert('Upload failed', 'There was an error uploading the image.');
-        },
-        async () => {
-          const downloadURL = await storageRef.getDownloadURL();
-          console.log('Image available at:', downloadURL);
-          
-          const reportData = {
-            imageUrl: downloadURL,
-            location,
-            coordinates: {
-              latitude: coordinates?.latitude,
-              longitude: coordinates?.longitude,
+      try {
+        const res = await axios.post(`http://${IP}/submit-report`, reportData);
+        console.log("Response Data:", res.data);
+  
+        if (res.data && res.data.status === "ok") {
+          // If status is "ok", proceed with image upload
+          const uploadTask = storageRef.put(blob);
+  
+          uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+              const progress = Math.round(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+              );
+              setTransferred(progress);
             },
-            googleMapsUrl,
-            description,
-            email
-          };
-
-          try {
-            const res = await axios.post(
-              `http://${IP}/submit-report`,
-              reportData
-            );
-            console.log("Response Data:", res.data);
-            if (res.data && res.data.status === "ok") {
-              Alert.alert(res.data.message);
-            }else if(res.data && res.data.status === "info"){
-              Alert.alert(res.data.message);
+            (error) => {
+              console.error('Upload failed:', error);
+              Alert.alert('Upload failed', 'There was an error uploading the image.');
+            },
+            async () => {
+              const downloadURL = await storageRef.getDownloadURL();
+              console.log('Image available at:', downloadURL);
+              
+              // Update the report with the image URL
+              try {
+                await axios.post(`http://${IP}/update-report-image`, {
+                  email,
+                  imageUrl: downloadURL
+                });
+                Alert.alert("Report submitted successfully with image.");
+              } catch (e) {
+                console.error("Error updating report with image:", e);
+                Alert.alert("Report submitted, but failed to attach image.");
+              }
             }
-          } catch (e) {
-            Alert.alert("Error Occurred. Please check the information is correct!");
-            console.error("Error:", e);
-          } finally {
-            removeImage(); // Clear image and related states after submission
-            setUploading(false);
-          }
+          );
+        } else if (res.data && res.data.status === "info") {
+          // If status is "info", don't upload the image
+          Alert.alert(res.data.message);
+        } else {
+          Alert.alert("Unexpected response from server");
         }
-      );
+      } catch (e) {
+        Alert.alert("Error Occurred. Please check the information is correct!");
+        console.error("Error:", e);
+      } finally {
+        removeImage(); // Clear image and related states after submission
+        setUploading(false);
+      }
     } catch (error) {
-      console.error('Error during upload:', error);
+      console.error('Error during submission:', error);
       setUploading(false);
-      Alert.alert('Upload error', 'Failed to upload the image.');
+      Alert.alert('Submission error', 'Failed to submit the report.');
     }
   };
 
+  if (!verified) {
+    return (
+      <ScrollView 
+        contentContainerStyle={styles.containerrep}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <Text style={styles.textrep}>Your account is not verified.</Text>
+        <Text style={styles.licenserepdesc}>
+          If you have updated your profile, wait for verification.
+        </Text>
+      </ScrollView>
+    );
+  }
   
   return (
     <View style={styles.containerrep}>
-      <ScrollView contentContainerStyle={styles.scrollrep}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollrep}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View>
           <Text style={styles.textrep}>Want to photograph?</Text>
         </View>
@@ -261,70 +313,70 @@ const Report = ({ navigation }) => {
         </View>
 
         {imageUri && (
-              <>
-               <View style={styles.imagecontainerrep}>
-                <Image source={{ uri: imageUri }} style={styles.imagerep} />
-                {loadingLocation ? (
-                  <View style={styles.loadinglocateContainer}>
-                    <ActivityIndicator size="large" color="#0000ff" />
-                    <Text style={styles.loadinglocateText}>Loading location...</Text>
+          <>
+            <View style={styles.imagecontainerrep}>
+              <Image source={{ uri: imageUri }} style={styles.imagerep} />
+              {loadingLocation ? (
+                <View style={styles.loadinglocateContainer}>
+                  <ActivityIndicator size="large" color="#0000ff" />
+                  <Text style={styles.loadinglocateText}>Loading location...</Text>
+                </View>
+              ) : (
+                <>
+                  {location && (
+                    <Text style={styles.locatetext}>
+                      Location: <Text style={{ fontWeight: 'bold' }}>{location}</Text>
+                    </Text>
+                  )}
+                  {coordinates && (
+                    <Text style={styles.locatetext}>
+                      Coordinates: <Text style={{ fontWeight: 'bold' }}>{coordinates.latitude}, {coordinates.longitude}</Text>
+                    </Text>
+                  )}
+                  
+                  <View style={styles.descriptionContainerrep}>
+                    <TextInput
+                      style={styles.descriptionInputrep}
+                      placeholder="Provide a brief description of the situation..."
+                      multiline={true}
+                      numberOfLines={4}
+                      onChangeText={(text) => setDescription(text)}
+                      value={description}
+                    />
                   </View>
-                ) : (
-                  <>
-                    {location && (
-                      <Text style={styles.locatetext}>
-                        Location: <Text style={{ fontWeight: 'bold' }}>{location}</Text>
-                      </Text>
-                    )}
-                    {coordinates && (
-                      <Text style={styles.locatetext}>
-                        Coordinates: <Text style={{ fontWeight: 'bold' }}>{coordinates.latitude}, {coordinates.longitude}</Text>
-                      </Text>
-                    )}
-                    
-                    <View style={styles.descriptionContainerrep}>
-                      <TextInput
-                        style={styles.descriptionInputrep}
-                        placeholder="Provide a brief description of the situation..."
-                        multiline={true}
-                        numberOfLines={4}
-                        onChangeText={(text) => setDescription(text)}
-                        value={description}
-                      />
-                    </View>
 
-                    <View style={styles.buttonContainerrep}>
-                      <TouchableOpacity style={styles.locatebutton} onPress={openInGoogleMaps}>
-                        <Text style={styles.locatebuttonText}>Open in Google Maps</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </>
-                )}
-                <View style={styles.buttonContainerrep}>
-                  <TouchableOpacity style={styles.actionButton} onPress={submitreport}>
-                    <Text style={styles.actionButtonText}>Submit</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.actionButton} onPress={removeImage}>
-                    <Text style={styles.actionButtonText}>Remove</Text>
-                  </TouchableOpacity>
-                </View>
-                </View>
-              </>
-            )}
-
-            <View style={styles.descreport}>
-              <Text style={styles.licensetxt}>Car License Plate</Text>
-              <Text style={styles.licenserepdesc}>
-                Make sure the car license plate is visible
-              </Text>
+                  <View style={styles.buttonContainerrep}>
+                    <TouchableOpacity style={styles.locatebutton} onPress={openInGoogleMaps}>
+                      <Text style={styles.locatebuttonText}>Open in Google Maps</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              )}
+              <View style={styles.buttonContainerrep}>
+                <TouchableOpacity style={styles.actionButton} onPress={submitReport}>
+                  <Text style={styles.actionButtonText}>Submit</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.actionButton} onPress={removeImage}>
+                  <Text style={styles.actionButtonText}>Remove</Text>
+                </TouchableOpacity>
+              </View>
             </View>
+          </>
+        )}
 
-            <View style={styles.descreport}>
-              <Text style={styles.licensetxt}>Car Image</Text>
-              <Text style={styles.licenserepdesc}>
-                Capture the entire car 
-              </Text>
-            </View>
+        <View style={styles.descreport}>
+          <Text style={styles.licensetxt}>Car License Plate</Text>
+          <Text style={styles.licenserepdesc}>
+            Make sure the car license plate is visible
+          </Text>
+        </View>
+
+        <View style={styles.descreport}>
+          <Text style={styles.licensetxt}>Car Image</Text>
+          <Text style={styles.licenserepdesc}>
+            Capture the entire car 
+          </Text>
+        </View>
       </ScrollView>
     </View>
   );

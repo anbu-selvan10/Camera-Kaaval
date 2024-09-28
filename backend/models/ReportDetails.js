@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 // Define the Report schema
 const reportSchema = new mongoose.Schema(
   {
-    imageUrl: { type: String, required: true },
+    imageUrl: { type: String },
     location: { type: String, required: true },
     coordinates: {
       latitude: { type: Number, required: true },
