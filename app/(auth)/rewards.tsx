@@ -21,6 +21,8 @@ const Rewards = () => {
 
   const email = user?.emailAddresses?.[0]?.emailAddress || "";
 
+  console.log(IP);
+
   // Function to fetch rewards from the backend
   const fetchRewards = async () => {
     try {

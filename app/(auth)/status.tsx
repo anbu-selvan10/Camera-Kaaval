@@ -56,6 +56,8 @@ const ReportComponent = () => {
     }
   };
 
+  console.log(IP);
+
   useEffect(() => {
     if (user) {
       fetchReports();

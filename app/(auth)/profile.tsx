@@ -189,6 +189,8 @@ const Profile = () => {
   // Automatically populate email from Clerk
   const email = user?.emailAddresses?.[0]?.emailAddress || "";
 
+  console.log(IP);
+
   useEffect(() => {
     if (email) {
       checkEmail(); // Check if user exists when email is loaded

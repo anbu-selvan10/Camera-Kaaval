@@ -22,10 +22,12 @@ mongoose
 require("./models/UserDetails.js");
 require("./models/ReportDetails.js");
 require("./models/FineDetails.js");
+require("./models/LimitDetails.js");
 
 const User = mongoose.model("user");
 const Report = mongoose.model("report");
 const Fine = mongoose.model("fine");
+const Limits = mongoose.model("Limits");
 
 app.post("/profile", async (req, res) => {
   const { username, email, lastname, firstname, mobile, vehicleno } = req.body;
@@ -73,8 +75,26 @@ app.get("/checkemail/:email", async (req, res) => {
 
 app.post("/submit-report", async (req, res) => {
   const { imageUrl, location, coordinates, googleMapsUrl, description, email } = req.body;
-
+  
   try {
+    // Check daily limit
+    const today = new Date();
+    const todayStart = new Date(today.setHours(0, 0, 0, 0));
+    const todayEnd = new Date(today.setHours(23, 59, 59, 999));
+    
+    let limit = await Limits.findOne({
+      email,
+      createdAt: {
+        $gte: todayStart,
+        $lt: todayEnd,
+      },
+    });
+
+    if (limit && limit.reportcount >= 5) {
+      return res.status(200).send({ status: "info", message: "You have submitted 5 reports for today. Daily limit reached." });
+    }
+
+    // Proceed with report submission
     if (!imageUrl || !location || !coordinates || !description) {
       throw new Error("Missing required fields: imageUrl, location, coordinates, or description");
     }
@@ -94,11 +114,23 @@ app.post("/submit-report", async (req, res) => {
     };
 
     const newReport = await Report.create(reportData);
-
     console.log("Report Created:", newReport);
-    res.status(200).send({ status: "ok", data: "Report submitted successfully" });
+
+    // Update or create limit
+    if (limit) {
+      limit.reportcount += 1;
+      await limit.save();
+    } else {
+      limit = await Limits.create({
+        reportcount: 1,
+        email,
+      });
+    }
+    console.log("Limit Updated:", limit);
+
+    res.status(200).send({ status: "ok", message: "Report submitted successfully" });
   } catch (error) {
-    console.error("Error Creating Report:", error);
+    console.error("Error Submitting Report:", error);
     res.status(400).send({ status: "error", message: "Error submitting report", error: error.message });
   }
 });

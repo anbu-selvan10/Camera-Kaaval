@@ -48,6 +48,8 @@ const Pay = () => {
     return `${day}-${month}-${year}`;
   };
 
+  console.log(IP);
+  
   const loadReports = async () => {
     if (!email) {
       Alert.alert("Error", "User email not available");

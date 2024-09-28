@@ -20,7 +20,7 @@ const Report = ({ navigation }) => {
   const [coordinates, setCoordinates] = useState<{ latitude: number, longitude: number } | null>(null);
   const [loadingLocation, setLoadingLocation] = useState<boolean>(true);
   const [description, setDescription] = useState<string | null>(null);
-  const [googleMapsUrl, setGoogleMapsUrl] = useState<string | null>(null); // State for Google Maps URL
+  const [googleMapsUrl, setGoogleMapsUrl] = useState<string | null>(null);
   const { user } = useUser();
 
   const email = user?.emailAddresses?.[0]?.emailAddress || "";
@@ -76,6 +76,8 @@ const Report = ({ navigation }) => {
       getLocation();
     }
   }, [imageUri]);
+
+  console.log(IP);
 
   const requestPermissions = async () => {
     try {
@@ -217,7 +219,9 @@ const Report = ({ navigation }) => {
             );
             console.log("Response Data:", res.data);
             if (res.data && res.data.status === "ok") {
-              Alert.alert("Report submitted successfully!");
+              Alert.alert(res.data.message);
+            }else if(res.data && res.data.status === "info"){
+              Alert.alert(res.data.message);
             }
           } catch (e) {
             Alert.alert("Error Occurred. Please check the information is correct!");
@@ -234,8 +238,8 @@ const Report = ({ navigation }) => {
       Alert.alert('Upload error', 'Failed to upload the image.');
     }
   };
-  
 
+  
   return (
     <View style={styles.containerrep}>
       <ScrollView contentContainerStyle={styles.scrollrep}>
