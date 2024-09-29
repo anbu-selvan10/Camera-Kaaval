@@ -20,7 +20,6 @@ import { firebase } from "../../config.js";
 import * as FileSystem from "expo-file-system";
 import { IP } from "@env";
 
-
 const { width: w } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
