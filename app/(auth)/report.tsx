@@ -7,7 +7,7 @@ import * as Location from 'expo-location'; // Import Location module
 import { firebase } from '../../config.js';
 import axios from "axios";
 import { useUser } from "@clerk/clerk-expo";
-import { IP } from "@env";
+import { IP,SIGMA } from "@env";
 
 const w = Dimensions.get('window').width;
 const { height, width } = Dimensions.get('window');

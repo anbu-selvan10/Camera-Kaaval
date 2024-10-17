@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useUser } from "@clerk/clerk-expo";
 import axios from "axios";
-import { IP } from "@env";
+import { IP,SIGMA } from "@env";
 
 const ReportComponent = () => {
   const { user } = useUser();
@@ -84,12 +84,33 @@ const ReportComponent = () => {
             <Text style={styles.text}>
               Date: {new Date(report.updatedAt).toLocaleDateString()}
             </Text>
-            <Text style={styles.text}>
-              Verified: {report.isVerified ? "Yes" : "No"}
-            </Text>
-            <Text style={styles.text}>
-              Status: {report.status}
-            </Text>
+            {report.isVerified ? (
+              <>
+              <Text style={styles.text}>Verified: 
+              <Text style={styles.textYes}> Yes</Text>
+              </Text>
+              </>
+            ) : (
+              <>
+              <Text style={styles.text}>Verified: 
+              <Text style={styles.textNo}> No</Text>
+              </Text>
+              </>
+            )}
+            {report.status === "Pending" ? (<>
+              <Text style={styles.text}>Status:
+              <Text style={styles.textPend}> Pending </Text></Text>
+            </>) : report.status === "Accepted" ? (
+              <>
+              <Text style={styles.text}>Status:
+              <Text style={styles.textYes}> Accepted</Text></Text>
+            </>
+            ) : (
+              <>
+              <Text style={styles.text}>Status:
+              <Text style={styles.textNo}> Rejected</Text></Text>
+            </>
+            )}
           </View>
         ))
       )}
@@ -127,6 +148,21 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     marginBottom: 5,
+  },
+  textYes: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: 'green'
+  },
+  textNo: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: 'red'
+  },
+  textPend: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: '#FFBF00'
   },
 });
 

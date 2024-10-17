@@ -11,7 +11,7 @@ import {
   RefreshControl,
   Alert,
 } from "react-native";
-import { IP } from "@env";
+import { IP,SIGMA } from "@env";
 
 const Rewards = () => {
   const { user } = useUser(); // Get the current user's information

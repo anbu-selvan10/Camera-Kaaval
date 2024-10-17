@@ -18,7 +18,7 @@ import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import { firebase } from "../../config.js";
 import * as FileSystem from "expo-file-system";
-import { IP } from "@env";
+import { IP,SIGMA } from "@env";
 
 const { width: w } = Dimensions.get("window");
 
