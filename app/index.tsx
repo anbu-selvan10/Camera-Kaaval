@@ -3,7 +3,7 @@ import { StyleSheet, Image, Dimensions, Text, View, TouchableOpacity } from 'rea
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Swiper from 'react-native-swiper';
 import { useRouter } from 'expo-router';
-import { PATH1, PATH2, PATH3 } from '@env';
+import {PATH1,PATH2,PATH3} from '@env';
 
 const w = Dimensions.get('window').width;
 const h = Dimensions.get('window').height;

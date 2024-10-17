@@ -19,4 +19,6 @@ const limitsSchema = new mongoose.Schema(
   }
 );
 
-mongoose.model("Limits", limitsSchema);
+const Limits=mongoose.model("Limits", limitsSchema);
+
+module.exports=Limits

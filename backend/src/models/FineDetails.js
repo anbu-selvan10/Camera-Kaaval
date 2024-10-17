@@ -35,4 +35,6 @@ const fineSchema = new mongoose.Schema(
   }
 );
 
-mongoose.model("fine", fineSchema);
+const Fine=mongoose.model("Fine", fineSchema);
+
+module.exports=Fine

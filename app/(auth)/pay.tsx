@@ -12,7 +12,7 @@ import {
   RefreshControl,
   Alert,
 } from "react-native";
-import { IP } from "@env";
+import {IP} from "@env";
 
 const Pay = () => {
   const { user } = useUser();
@@ -26,7 +26,7 @@ const Pay = () => {
   const fetchReports = async (email) => {
     try {
       const response = await axios.post(
-        `http://${IP}/findFinesByEmail`,
+        `http://${IP}/api/payments/findFinesByEmail`,
         { email }
       );
       if (response.data.message === "No fines found for this email") {
@@ -48,7 +48,6 @@ const Pay = () => {
     return `${day}-${month}-${year}`;
   };
 
-  console.log(IP);
   
   const loadReports = async () => {
     if (!email) {
@@ -80,7 +79,7 @@ const Pay = () => {
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     try {
-      const response = await axios.post(`http://${IP}/payFine`, {
+      const response = await axios.post(`http://${IP}/api/payments/payFine`, {
         id: fineId, // Send the _id to the backend
       });
 

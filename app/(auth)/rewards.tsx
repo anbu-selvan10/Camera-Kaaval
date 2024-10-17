@@ -11,7 +11,7 @@ import {
   RefreshControl,
   Alert,
 } from "react-native";
-import { IP } from "@env";
+import {IP} from "@env";
 
 const Rewards = () => {
   const { user } = useUser(); // Get the current user's information
@@ -21,13 +21,12 @@ const Rewards = () => {
 
   const email = user?.emailAddresses?.[0]?.emailAddress || "";
 
-  console.log(IP);
 
   // Function to fetch rewards from the backend
   const fetchRewards = async () => {
     try {
       setLoading(true);
-      const response = await axios.post(`http://${IP}/rewards`, {
+      const response = await axios.post(`http://${IP}/api/reward/rewards`, {
         email,
       });
 

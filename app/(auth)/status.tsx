@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useUser } from "@clerk/clerk-expo";
 import axios from "axios";
-import { IP } from "@env";
+import {IP} from "@env";
 
 const ReportComponent = () => {
   const { user } = useUser();
@@ -24,7 +24,7 @@ const ReportComponent = () => {
     try {
       const email = user?.emailAddresses?.[0]?.emailAddress || "";
       const response = await axios.post(
-        `http://${IP}/getReports`,
+        `http://${IP}/api/status/getReports`,
         {
           email: email,
         }
@@ -43,7 +43,7 @@ const ReportComponent = () => {
     try {
       const email = user?.emailAddresses?.[0]?.emailAddress || "";
       const response = await axios.post(
-        `http://${IP}/getReports`,
+        `http://${IP}/api/status/getReports`,
         {
           email: email,
         }
@@ -56,7 +56,7 @@ const ReportComponent = () => {
     }
   };
 
-  console.log(IP);
+
 
   useEffect(() => {
     if (user) {
@@ -65,7 +65,7 @@ const ReportComponent = () => {
   }, [user]);
 
   return (
-    <ScrollView
+        <ScrollView
       contentContainerStyle={styles.container}
       refreshControl={  // Add RefreshControl to ScrollView
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -73,7 +73,7 @@ const ReportComponent = () => {
     >
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
-      ) : reports.length === 0 ? ( 
+      ) : reports.length === 0 ? (
         <Text style={styles.noReportText}>No reports available.</Text>
       ) : (
         reports.map((report) => (
@@ -84,16 +84,35 @@ const ReportComponent = () => {
             <Text style={styles.text}>
               Date: {new Date(report.updatedAt).toLocaleDateString()}
             </Text>
+            
             <Text style={styles.text}>
-              Verified: {report.isVerified ? "Yes" : "No"}
+              Verified: 
+              <Text
+                style={report.isVerified ? styles.greenText : styles.redText}
+              >
+                {" "}{report.isVerified ? "Yes" : "No"}
+              </Text>
             </Text>
+
             <Text style={styles.text}>
-              Status: {report.status}
+              Status: 
+              <Text
+                style={
+                  report.status === "Pending"
+                    ? styles.yellowText
+                    : report.status === "Accepted"
+                    ? styles.greenText
+                    : styles.redText
+                }
+              >
+                {" "}{report.status}
+              </Text>
             </Text>
           </View>
         ))
       )}
     </ScrollView>
+
   );
 };
 
@@ -127,6 +146,15 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     marginBottom: 5,
+  },
+  greenText: {
+    color: "green",
+  },
+  redText: {
+    color: "red",
+  },
+  yellowText: {
+    color: "#FFD700",
   },
 });
 
