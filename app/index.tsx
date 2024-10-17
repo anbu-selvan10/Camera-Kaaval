@@ -3,7 +3,6 @@ import { StyleSheet, Image, Dimensions, Text, View, TouchableOpacity } from 'rea
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Swiper from 'react-native-swiper';
 import { useRouter } from 'expo-router';
-import { PATH1, PATH2, PATH3 } from '@env';
 
 const w = Dimensions.get('window').width;
 const h = Dimensions.get('window').height;
@@ -111,21 +110,21 @@ const SliderHome = () => {
       }
     >
       <View style={styles.slideContainer}>
-        <Image source={require(PATH1)} style={styles.imageSlide} />
+        <Image source={require("/Camera Kaaval/camera-kaaval/assets/images/sliderimg1.jpeg")} style={styles.imageSlide} />
         <View style={styles.textContainer}>
           <Text style={styles.titleSlide}>Capture Violations, Earn Rewards, Improve Road Safety</Text>
         </View>
       </View>
 
       <View style={styles.slideContainer}>
-        <Image source={require(PATH2)} style={styles.imageSlide} />
+        <Image source={require("/Camera Kaaval/camera-kaaval/assets/images/sliderimg2.jpeg")} style={styles.imageSlide} />
         <View style={styles.textContainer}>
           <Text style={styles.titleSlide}>Report and Verify, Strive for Safer Streets!</Text>
         </View>
       </View>
 
       <View style={styles.slideContainer}>
-        <Image source={require(PATH3)} style={styles.imageSlide} />
+        <Image source={require("/Camera Kaaval/camera-kaaval/assets/images/sliderimg3.jpeg")} style={styles.imageSlide} />
         <View style={styles.textContainer}>
           <Text style={styles.titleSlide}>Spot Violations, Protect Lives, Make Every Report Matter</Text>
         </View>

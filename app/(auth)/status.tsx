@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { useUser } from "@clerk/clerk-expo";
 import axios from "axios";
-import { IP,SIGMA } from "@env";
 
 const ReportComponent = () => {
   const { user } = useUser();
@@ -24,7 +23,7 @@ const ReportComponent = () => {
     try {
       const email = user?.emailAddresses?.[0]?.emailAddress || "";
       const response = await axios.post(
-        `http://${IP}/getReports`,
+        `http://192.168.23.242:5000/api/status/getReports`,
         {
           email: email,
         }
@@ -43,7 +42,7 @@ const ReportComponent = () => {
     try {
       const email = user?.emailAddresses?.[0]?.emailAddress || "";
       const response = await axios.post(
-        `http://${IP}/getReports`,
+        `http://192.168.23.242:5000/api/status/getReports`,
         {
           email: email,
         }
@@ -56,7 +55,7 @@ const ReportComponent = () => {
     }
   };
 
-  console.log(IP);
+
 
   useEffect(() => {
     if (user) {
@@ -65,7 +64,7 @@ const ReportComponent = () => {
   }, [user]);
 
   return (
-    <ScrollView
+        <ScrollView
       contentContainerStyle={styles.container}
       refreshControl={  // Add RefreshControl to ScrollView
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -73,7 +72,7 @@ const ReportComponent = () => {
     >
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
-      ) : reports.length === 0 ? ( 
+      ) : reports.length === 0 ? (
         <Text style={styles.noReportText}>No reports available.</Text>
       ) : (
         reports.map((report) => (
@@ -115,6 +114,7 @@ const ReportComponent = () => {
         ))
       )}
     </ScrollView>
+
   );
 };
 

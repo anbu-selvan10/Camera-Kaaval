@@ -7,7 +7,6 @@ import * as Location from 'expo-location'; // Import Location module
 import { firebase } from '../../config.js';
 import axios from "axios";
 import { useUser } from "@clerk/clerk-expo";
-import { IP,SIGMA } from "@env";
 
 const w = Dimensions.get('window').width;
 const { height, width } = Dimensions.get('window');
@@ -26,6 +25,7 @@ const Report = ({ navigation }) => {
   const { user } = useUser();
 
   const email = user?.emailAddresses?.[0]?.emailAddress || "";
+
 
   const getLocation = async () => {
     try {
@@ -75,7 +75,7 @@ const Report = ({ navigation }) => {
 
   const checkVerification = async () => {
     try {
-      const response = await axios.get(`http://${IP}/is-verified`, {
+      const response = await axios.get(`http://192.168.23.242:5000/api/reports/is-verified`, {
         params: { email }
       });
       setVerified(response.data.isVerified);
@@ -100,8 +100,6 @@ const Report = ({ navigation }) => {
     setRefreshing(true); // Start refreshing
     checkVerification().finally(() => setRefreshing(false)); // End refreshing
   }, []);
-
-  console.log(IP);
 
   const requestPermissions = async () => {
     try {
@@ -215,7 +213,7 @@ const Report = ({ navigation }) => {
       };
   
       try {
-        const res = await axios.post(`http://${IP}/submit-report`, reportData);
+        const res = await axios.post(`http://192.168.23.242:5000/api/reports/submit-report`, reportData);
         console.log("Response Data:", res.data);
   
         if (res.data && res.data.status === "ok") {
@@ -240,7 +238,7 @@ const Report = ({ navigation }) => {
               
               // Update the report with the image URL
               try {
-                await axios.post(`http://${IP}/update-report-image`, {
+                await axios.post(`http://192.168.23.242:5000/api/reports/update-report-image`, {
                   email,
                   imageUrl: downloadURL
                 });

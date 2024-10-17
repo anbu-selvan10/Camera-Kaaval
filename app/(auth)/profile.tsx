@@ -18,7 +18,6 @@ import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import { firebase } from "../../config.js";
 import * as FileSystem from "expo-file-system";
-import { IP,SIGMA } from "@env";
 
 const { width: w } = Dimensions.get("window");
 
@@ -188,7 +187,6 @@ const Profile = () => {
   // Automatically populate email from Clerk
   const email = user?.emailAddresses?.[0]?.emailAddress || "";
 
-  console.log(IP); 
 
   useEffect(() => {
     if (email) {
@@ -202,7 +200,7 @@ const Profile = () => {
 
     try {
       const response = await axios.get(
-        `http://${IP}/checkemail/${email}`
+        `http://192.168.23.242:5000/api/profiles/checkemail/${email}`
       );
       if (response.data.status === "exists") {
         const userData = response.data.data;
@@ -285,7 +283,7 @@ const Profile = () => {
 
     try {
       const res = await axios.post(
-        `http://${IP}/profile`,
+        `http://192.168.23.242:5000/api/profiles/profile`,
         userData
       );
       console.log("Response Data:", res.data);
