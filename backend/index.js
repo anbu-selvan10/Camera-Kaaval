@@ -21,7 +21,7 @@ app.use("/api/payments",payRoutes);
 app.use("/api/reward",rewardRoutes);
 
 app.listen(port, () => {
-    console.log("Server is started on port 5000");
+    console.log("Server is started on port 5000!");
 });
   
 
