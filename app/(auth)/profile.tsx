@@ -200,7 +200,7 @@ const Profile = () => {
 
     try {
       const response = await axios.get(
-        `http://192.168.23.242:5000/api/profiles/checkemail/${email}`
+        `http://camera-kaaval-backend.vercel.app/api/profiles/checkemail/${email}`
       );
       if (response.data.status === "exists") {
         const userData = response.data.data;
@@ -283,7 +283,7 @@ const Profile = () => {
 
     try {
       const res = await axios.post(
-        `http://192.168.23.242:5000/api/profiles/profile`,
+        `http://camera-kaaval-backend.vercel.app/api/profiles/profile`,
         userData
       );
       console.log("Response Data:", res.data);

@@ -75,7 +75,7 @@ const Report = ({ navigation }) => {
 
   const checkVerification = async () => {
     try {
-      const response = await axios.get(`http://192.168.23.242:5000/api/reports/is-verified`, {
+      const response = await axios.get(`http://camera-kaaval-backend.vercel.app/api/reports/is-verified`, {
         params: { email }
       });
       setVerified(response.data.isVerified);
@@ -213,7 +213,7 @@ const Report = ({ navigation }) => {
       };
   
       try {
-        const res = await axios.post(`http://192.168.23.242:5000/api/reports/submit-report`, reportData);
+        const res = await axios.post(`http://camera-kaaval-backend.vercel.app/api/reports/submit-report`, reportData);
         console.log("Response Data:", res.data);
   
         if (res.data && res.data.status === "ok") {
@@ -238,7 +238,7 @@ const Report = ({ navigation }) => {
               
               // Update the report with the image URL
               try {
-                await axios.post(`http://192.168.23.242:5000/api/reports/update-report-image`, {
+                await axios.post(`http://camera-kaaval-backend.vercel.app/api/reports/update-report-image`, {
                   email,
                   imageUrl: downloadURL
                 });

@@ -25,7 +25,7 @@ const Pay = () => {
   const fetchReports = async (email) => {
     try {
       const response = await axios.post(
-        `http://192.168.23.242:5000/api/payments/findFinesByEmail`,
+        `http://camera-kaaval-backend.vercel.app/api/payments/findFinesByEmail`,
         { email }
       );
       if (response.data.message === "No fines found for this email") {
@@ -78,7 +78,7 @@ const Pay = () => {
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     try {
-      const response = await axios.post(`http://192.168.23.242:5000/api/payments/payFine`, {
+      const response = await axios.post(`http://camera-kaaval-backend.vercel.app/api/payments/payFine`, {
         id: fineId, // Send the _id to the backend
       });
 

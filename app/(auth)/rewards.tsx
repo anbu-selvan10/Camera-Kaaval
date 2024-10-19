@@ -25,7 +25,7 @@ const Rewards = () => {
   const fetchRewards = async () => {
     try {
       setLoading(true);
-      const response = await axios.post(`http://192.168.23.242:5000/api/reward/rewards`, {
+      const response = await axios.post(`http://camera-kaaval-backend.vercel.app/api/reward/rewards`, {
         email,
       });
 

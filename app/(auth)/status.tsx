@@ -23,7 +23,7 @@ const ReportComponent = () => {
     try {
       const email = user?.emailAddresses?.[0]?.emailAddress || "";
       const response = await axios.post(
-        `http://192.168.23.242:5000/api/status/getReports`,
+        `http://camera-kaaval-backend.vercel.app/api/status/getReports`,
         {
           email: email,
         }
@@ -42,7 +42,7 @@ const ReportComponent = () => {
     try {
       const email = user?.emailAddresses?.[0]?.emailAddress || "";
       const response = await axios.post(
-        `http://192.168.23.242:5000/api/status/getReports`,
+        `http://camera-kaaval-backend.vercel.app/api/status/getReports`,
         {
           email: email,
         }
