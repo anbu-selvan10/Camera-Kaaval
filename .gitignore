@@ -10,6 +10,10 @@ config.js
 dist/
 web-build/
 
+#backend
+backend/node_modules/
+backend/.env
+
 # Native
 *.orig.*
 *.jks
