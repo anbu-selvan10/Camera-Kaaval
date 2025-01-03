@@ -183,6 +183,7 @@ const Profile = () => {
   const [uploading, setUploading] = useState<boolean>(false);
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [downloadUri, setDownloadUri] = useState<string>("");
 
   // Automatically populate email from Clerk
   const email = user?.emailAddresses?.[0]?.emailAddress || "";
@@ -279,6 +280,7 @@ const Profile = () => {
       firstname,
       mobile,
       vehicleno,
+      downloadUri
     };
 
     try {
@@ -329,6 +331,11 @@ const Profile = () => {
       const ref = firebase.storage().ref().child(`ProofImages/${filename}`);
 
       await ref.put(blob);
+
+      const imageDownloadUri = await ref.getDownloadURL();
+      console.log(imageDownloadUri);
+      setDownloadUri(imageDownloadUri);
+
       setUploading(false);
       Alert.alert("Photo Uploaded");
     } catch (error) {

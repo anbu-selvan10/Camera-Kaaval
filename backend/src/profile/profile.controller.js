@@ -1,7 +1,7 @@
 const User=require("../models/UserDetails");
 
 const updateProfile = async(req,res) =>{
-  const { username, email, lastname, firstname, mobile, vehicleno } = req.body;
+  const { username, email, lastname, firstname, mobile, vehicleno, downloadUri } = req.body;
 
   try {
     const newUser = await User.create({
@@ -10,7 +10,8 @@ const updateProfile = async(req,res) =>{
       lastname,
       firstname,
       mobile,
-      vehicleno
+      vehicleno,
+      downloadUri
     });
 
     console.log("User Created:", newUser);

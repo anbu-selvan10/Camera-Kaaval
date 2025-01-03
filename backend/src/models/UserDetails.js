@@ -32,6 +32,10 @@ const userDetailsSchema = new mongoose.Schema({
         required: true,
         match: [/^TN \d{2} [A-Z]{2} \d{4}$/, 'Please enter a valid vehicle number'], // Validates vehicle number format
     },
+    downloadUri: {
+        type: String,
+        required: true
+    },
     isVerified: {
         type: Boolean,
         default: false, // Default set to false
